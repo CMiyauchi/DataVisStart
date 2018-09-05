@@ -1,0 +1,87 @@
+# DataVisStart
+#By Vanessa Van Gilder
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+
+#read in csv as dataframe (df)
+brands = "file_name.csv"
+df = pd.read_csv(brands)
+
+#show top 5
+df.head()
+
+#keep only name and count
+brand_df = df[['brand_name','link_count']]
+brand_df.head()
+
+
+#combine the duplicate names and sum the counts
+#resetting the index resets the numbers to order you have set paramaters 
+brand_df = brand_df.groupby(['brand_name']).sum().reset_index()
+brand_df
+#sort by count
+brand_df = brand_df.sort_values(by='link_count', ascending=False)
+
+#get the top ten and reset index
+top_ten_df = (brand_df.head(10)).reset_index(drop=True)
+top_ten_df
+def brand_bar(bar_data, bar_title, dates):
+   '''make a bar chart w/ brand names'''
+
+   #make the font scale larger
+   sns.set(font_scale=1.5)
+
+   #set the plot size
+   plt.figure(figsize=(25,10))
+
+   #make the bar plot
+   bars = sns.barplot(x='brand_name', y='link_count', data=bar_data, palette='pastel', 
+                     ci=None, edgecolor='k', linewidth=1)
+
+   #remove the axes labels 
+   plt.xlabel('')
+   plt.ylabel('')
+
+   #get the bar value numbers and put them on the bars
+   #-.01 sets the y axis amount in relation to data, ha and va are about positioning and you need to play with it
+   for index, row in bar_data.iterrows():
+       bars.text(index, row['link_count']-.01, '{:,}'.format(row['link_count']), ha='center', va='bottom')
+   
+   #dates = ' /n ' + dates
+   #add the title and dates
+   #fstrings- use three quotation marks. Kinda like format.{}/
+   plt.title(f'''{bar_title} 
+{dates}''', fontsize=40)
+   
+   #show the plot
+   plt.show()
+
+
+#set the date range that's covered
+dates = "4/2017 - 4/2018"
+
+#make the bar chart for the top ten brands
+brand_bar(top_ten_df, "Top Ten Removed Brands", dates)
+
+
+#redo with the outlier "OP" removed
+no_op_top_ten_df = (brand_df.head(11)).reset_index(drop=True)
+no_op_top_ten_df = (no_op_top_ten_df.drop([0])).reset_index(drop=True)
+no_op_top_ten_df
+
+
+#plot the new bar chart
+brand_bar(no_op_top_ten_df, "Top Ten Removed Brands (Minus OP)", dates)
+
+#get the bottom ten brands
+btm_ten_df = brand_df.sort_values(by='link_count')
+btm_ten_df = (btm_ten_df.head(10)).reset_index(drop=True)
+btm_ten_df
+
+
+
+#plot the bottom ten
+brand_bar(btm_ten_df, "Bottom Ten Removed Brands", dates)
+

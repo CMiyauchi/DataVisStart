@@ -1,5 +1,5 @@
 # DataVisStart
-#By Vanessa Van Gilder
+_author_= "VanessaVanGilder"
 
 import matplotlib.pyplot as plt
 import pandas as pd
